@@ -1,0 +1,19 @@
+version: '3'
+services:
+  d8:
+    container_name: d8
+    image: sample_poc:latest
+    ports:
+      - "8585:80"
+  d8mysql:
+    container_name: d8mysql
+    restart: always
+    image: mysql:5.7.28
+    environment: 
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: drupal
+      MYSQL_USER: user
+    # This is obsolete if you don't plan to connect to this db server from another machine outside docker network
+    # ports:
+    #   - "3306:3306"
