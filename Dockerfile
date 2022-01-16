@@ -92,8 +92,8 @@ RUN cp -RL /opt/drupal/* /var/www/html/ && cp /opt/drupal/.htaccess /var/www/htm
 
 RUN chown -R www-data:www-data /var/www/html/sites/default
 
-# RUN sed -i -e 's/Listen 80/Listen 8080/' etc/apache2/ports.conf && \
-#    sed -i -e 's/VirtualHost \*:80/VirtualHost *:8080/' etc/apache2/sites-enabled/000-default.conf
+RUN sed -i -e 's/Listen 80/Listen 8080/' /etc/apache2/ports.conf && \
+    sed -i -e 's/VirtualHost \*:80/VirtualHost *:8080/' /etc/apache2/sites-enabled/000-default.conf
 
 #COPY ./custom.conf /etc/apache2/sites-enabled/custom.conf
 #RUN chmod 755 /etc/apache2/sites-enabled/custom.conf
