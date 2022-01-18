@@ -1,12 +1,12 @@
 version: '3'
 services:
-  d8:
-    container_name: d8
-    image: sample_poc:latest
+  drupal9:
+    container_name: drupal9
+    image: v3mainproducts/drupal
     ports:
       - "8585:80"
-  d8mysql:
-    container_name: d8mysql
+  d9mysql:
+    container_name: d9mysql
     restart: always
     image: mysql:5.7.28
     environment: 
