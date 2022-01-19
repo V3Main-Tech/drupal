@@ -3,6 +3,7 @@ pipeline {
     imagename = "v3mainproducts/drupal"
     registryCredential = 'docker_hub_creds'
     dockerImage = ''
+    namespace = 'v3md-drupal'
   }
   agent any
   stages {
@@ -29,6 +30,25 @@ pipeline {
           }
         }
       }
+    }
+    stage('Deploy to K8s')
+		{
+			steps{
+				sshagent(['k8s-jenkins'])
+				{
+					sh 'scp -r -o StrictHostKeyChecking=no deployment.yaml peeyushj@v3mdsrvrhel03:/path'
+					
+					script{
+						try{
+							sh 'ssh peeyushj@v3mdsrvrhel03 kubectl apply -f deployment.yaml --kubeconfig=/path/kube.yaml'
+
+							}catch(error)
+							{
+
+							}
+					}
+				}
+			}
     }
     stage('Remove Unused docker image') {
       steps{
