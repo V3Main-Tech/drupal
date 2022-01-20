@@ -14,8 +14,11 @@ spec:
          type: front-end
      spec:
          containers:
-           - name: drupal-poc
-             image: "v3mainproducts/drupal:latest"
+           - name: drupal
+             image: "docker.io/v3mainproducts/drupal"
+             imagePullPolicy: Always
+         imagePullSecrets:
+         - name: drupalsecret
   replicas: 1
   selector:
     matchLabels:
