@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: v3mainmysql-deployment
+  labels:
+     app: mysql
+     type: back-end
+spec:
+  template:
+     metadata:
+       name: mysql-pod
+       labels: 
+         app: mysql
+         type: back-end
+     spec:
+         containers:
+           - name: mysql
+             image: "docker.io/mysql:5.7.28"
+             env:
+             - name: MYSQL_ROOT_PASSWORD
+               value: "password"
+             - name: MYSQL_PASSWORD
+               value: "password"
+             - name: MYSQL_DATABASE
+               value: "drupal"
+             - name: MYSQL_USER
+               value: "user"
+             imagePullPolicy: Always
+         imagePullSecrets:
+         - name: drupalsecret
+  replicas: 1
+  selector:
+    matchLabels:
+      type: back-end
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: v3mainmysql-service
+spec:
+  selector:
+    app: mysql
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      targetPort: 3306
+      port: 3306
