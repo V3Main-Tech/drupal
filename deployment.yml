@@ -1,53 +1,37 @@
-kind: Ingress
-apiVersion: networking.k8s.io/v1beta1
-metadata:
-  name: drupalpoc
-spec:
-  rules:
-  - host: drupalpoc.v3main.com
-    http:
-      paths:
-       - backend:
-            serviceName: drupalpoc-service
-            servicePort: 80
-
----
-
-kind: Service
-apiVersion: v1
-metadata:
-  name: drupalpoc-service
-spec:
-  selector:
-    app: drupalpoc
-  ports:
-    - name: app-port
-      port: 80
-      targetPort: 8080
-
----
-
-kind: Deployment
 apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: drupalpoc
+  name: v3maindrupal-deployment
+  labels:
+     app: drupal
+     type: front-end
 spec:
   template:
      metadata:
+       name: drupal-pod
        labels: 
-         app: drupalpoc
+         app: drupal
+         type: front-end
      spec:
          containers:
-           - name: drupalpoc
+           - name: drupal-poc
              image: "v3mainproducts/drupal:latest"
-             env:
-             - name: env
-               value: "dev"
-             imagePullPolicy: Always
-             ports:
-             - containerPort: 8080
-               protocols: TCP
   replicas: 1
   selector:
     matchLabels:
-      app: drupalpoc
+      type: front-end
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: v3maindrupal-service
+spec:
+  selector:
+    app: drupal
+  type: LoadBalancer  
+  ports:
+    - protocol: TCP
+      targetPort: 8080
+      port: 80
+      nodePort: 30000
