@@ -36,17 +36,8 @@ pipeline {
 			steps{
 				sshagent(['k8s-jenkins'])
 				{
-					sh 'scp -r -o StrictHostKeyChecking=no deployment.yaml peeyushj@v3mdsrvrhel03:/path'
-					
-					script{
-						try{
-							sh 'ssh peeyushj@v3mdsrvrhel03 kubectl apply -f deployment.yaml --kubeconfig=/path/kube.yaml'
-
-							}catch(error)
-							{
-
-							}
-					}
+				    sh("kubectl apply -f deployment.yml")
+            sh("kubectl apply -f mysql.yml")
 				}
 			}
     }
