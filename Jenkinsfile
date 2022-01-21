@@ -33,14 +33,16 @@ pipeline {
     }
     stage('Deploy to K8s')
 		{
-			steps{
+      steps{
+			 script{
 				    // Create namespace if it doesn't exist
             sh("kubectl get ns ${namespace} || kubectl create ns ${namespace}")
 				    sh("kubectl --namespace=${namespace} apply -f deployment.yml")
             sh("kubectl --namespace=${namespace} apply -f mysql.yml")
             sh("echo http://`kubectl --namespace=${namespace} get service/${feSvcName} --output=json | jq -r '.status.loadBalancer.ingress[0].ip'` > ${feSvcName}")
 				
-			}
+			 }
+      }
     }
     stage('Remove Unused docker image') {
       steps{
