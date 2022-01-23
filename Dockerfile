@@ -76,7 +76,7 @@ COPY --from=composer:2 /usr/bin/composer /usr/local/bin/
 
 
 
-ENV GIT_BRANCH 9.3.x
+ENV GIT_BRANCH drupal_latest
 
 RUN apt-get update && apt-get install -y git
 
@@ -90,10 +90,13 @@ RUN composer require drush/drush
 
 RUN cp -RL /opt/drupal/* /var/www/html/ && cp /opt/drupal/.htaccess /var/www/html 
 
+RUN cd /opt/drupal/sites/default && mkdir files && chmod 775 files
+
 RUN chown -R www-data:www-data /var/www/html/sites/default
 
 RUN sed -i -e 's/Listen 80/Listen 8080/' /etc/apache2/ports.conf && \
     sed -i -e 's/VirtualHost \*:80/VirtualHost *:8080/' /etc/apache2/sites-enabled/000-default.conf
+RUN cd /var/www/html/sites/default && ls -ltr
 
 #COPY ./custom.conf /etc/apache2/sites-enabled/custom.conf
 #RUN chmod 755 /etc/apache2/sites-enabled/custom.conf
