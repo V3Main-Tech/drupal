@@ -88,9 +88,9 @@ RUN composer install
 
 RUN composer require drush/drush
 
-RUN cp -RL /opt/drupal/* /var/www/html/ && cp /opt/drupal/.htaccess /var/www/html 
-
 RUN cd /opt/drupal/sites/default && mkdir files && chmod 775 files
+
+RUN cp -RL /opt/drupal/* /var/www/html/ && cp /opt/drupal/.htaccess /var/www/html 
 
 RUN chown -R www-data:www-data /var/www/html/sites/default
 
