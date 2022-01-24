@@ -76,7 +76,7 @@ COPY --from=composer:2 /usr/bin/composer /usr/local/bin/
 
 
 
-ENV GIT_BRANCH drupal_latest
+ENV GIT_BRANCH 9.3.x
 
 RUN apt-get update && apt-get install -y git
 
