@@ -96,7 +96,6 @@ RUN chown -R www-data:www-data /var/www/html/sites/default
 
 RUN sed -i -e 's/Listen 80/Listen 8080/' /etc/apache2/ports.conf && \
     sed -i -e 's/VirtualHost \*:80/VirtualHost *:8080/' /etc/apache2/sites-enabled/000-default.conf
-RUN cd /var/www/html/sites/default && ls -ltr
 
 #COPY ./custom.conf /etc/apache2/sites-enabled/custom.conf
 #RUN chmod 755 /etc/apache2/sites-enabled/custom.conf
