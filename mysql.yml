@@ -1,7 +1,36 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: v3mainmysql-service
+  namespace: v3md-drupal
+spec:
+  selector:
+    app: mysql
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      targetPort: 3306
+      port: 3306
+
+--- 
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: 
+  name: v3md-mysql-pvc
+  namespace: v3md-drupal
+spec: 
+  accessModes: 
+    - ReadWriteOnce
+  resources: 
+    requests: 
+      storage: 5Gi
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: v3mainmysql-deployment
+  namespace: v3md-drupal
   labels:
      app: mysql
      type: back-end
@@ -16,6 +45,10 @@ spec:
          containers:
            - name: mysql
              image: "docker.io/mysql:5.7.28"
+             volumeMounts: 
+             - mountPath: /var/lib/mysql
+               name: vol-drupal
+               subPath: dbdata
              env:
              - name: MYSQL_ROOT_PASSWORD
                value: "password"
@@ -28,21 +61,11 @@ spec:
              imagePullPolicy: Always
          imagePullSecrets:
          - name: drupalsecret
+         volumes: 
+         - name: vol-drupal
+           persistentVolumeClaim: 
+              claimName: v3md-mysql-pvc
   replicas: 1
   selector:
     matchLabels:
       type: back-end
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: v3mainmysql-service
-spec:
-  selector:
-    app: mysql
-  type: ClusterIP
-  ports:
-    - protocol: TCP
-      targetPort: 3306
-      port: 3306

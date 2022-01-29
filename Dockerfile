@@ -1,5 +1,5 @@
 #
-# NOTE: THIS DOCKERFILE IS GENERATED VIA "apply-templates.sh"
+# NOTE: THIS DOCKERFILE IS created by "v3Main"
 #
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
@@ -65,11 +65,11 @@ RUN { \
       echo 'memory_limit=2048M'; \
       echo 'error_log=/var/log/apache2/php-error.log'; \
       echo 'upload_emp_dir=/var/www/html/sites/default/files/tmp'; \
-		echo 'opcache.memory_consumption=128'; \
-		echo 'opcache.interned_strings_buffer=8'; \
-		echo 'opcache.max_accelerated_files=4000'; \
-		echo 'opcache.revalidate_freq=60'; \
-		echo 'opcache.fast_shutdown=1'; \
+      echo 'opcache.memory_consumption=128'; \
+      echo 'opcache.interned_strings_buffer=8'; \
+      echo 'opcache.max_accelerated_files=4000'; \
+      echo 'opcache.revalidate_freq=60'; \
+      echo 'opcache.fast_shutdown=1'; \
 	} > /usr/local/etc/php/conf.d/opcache-recommended.ini
 
 COPY --from=composer:2 /usr/bin/composer /usr/local/bin/
@@ -80,24 +80,33 @@ ENV GIT_BRANCH 9.3.x
 
 RUN apt-get update && apt-get install -y git
 
-WORKDIR /opt/drupal
+RUN apt-get update && apt-get install -y zip unzip wget
 
-RUN git clone -b $GIT_BRANCH https://github.com/V3Main-Tech/drupal.git /opt/drupal
+RUN apt-get update && apt-get install -y curl 
+
+WORKDIR /var/www/html
+
+RUN git clone -b $GIT_BRANCH https://github.com/V3Main-Tech/drupal.git /var/www/html
 
 RUN composer install
 
-RUN composer require drush/drush
+RUN composer require --dev drush/drush
 
-RUN cd /opt/drupal/sites/default && mkdir files && chmod 775 files
+RUN wget -O drush.phar https://github.com/drush-ops/drush-launcher/releases/latest/download/drush.phar
 
-RUN cp -RL /opt/drupal/* /var/www/html/ && cp /opt/drupal/.htaccess /var/www/html 
+RUN chmod +x drush.phar
+
+RUN mv drush.phar /usr/local/bin/drush
+#RUN cd /var/www/html/sites/default && mkdir files && chmod 775 files
+#RUN cp -RL /var/www/html/* /var/www/html/ && cp /opt/drupal/.htaccess /var/www/html 
 
 RUN chown -R www-data:www-data /var/www/html/sites/default
 
 RUN sed -i -e 's/Listen 80/Listen 8080/' /etc/apache2/ports.conf && \
     sed -i -e 's/VirtualHost \*:80/VirtualHost *:8080/' /etc/apache2/sites-enabled/000-default.conf
 
-#COPY ./custom.conf /etc/apache2/sites-enabled/custom.conf
-#RUN chmod 755 /etc/apache2/sites-enabled/custom.conf
-RUN /etc/init.d/apache2 restart
+#RUN cd /var/www/html/sites/default && ls -ltr
+RUN ./vendor/bin/drush --version
 
+#RUN source .bashrc
+RUN /etc/init.d/apache2 restart

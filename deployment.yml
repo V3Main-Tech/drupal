@@ -1,7 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: v3maindrupal-service
+  namespace: v3md-drupal
+spec:
+  selector:
+    app: drupal
+  type: LoadBalancer  
+  ports:
+    - protocol: TCP
+      targetPort: 8080
+      port: 80
+      nodePort: 30000
+      
+--- 
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: 
+  name: v3md-drupal-pvc
+  namespace: v3md-drupal
+spec: 
+  accessModes: 
+    - ReadWriteOnce
+  resources: 
+    requests: 
+      storage: 5Gi
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: v3maindrupal-deployment
+  namespace: v3md-drupal
   labels:
      app: drupal
      type: front-end
@@ -13,28 +43,30 @@ spec:
          app: drupal
          type: front-end
      spec:
+     	 initContainers:
+           - name: init-sites-volume
+             image: "docker.io/v3mainproducts/drupal"
+             imagePullPolicy: Always
+             command: ['/bin/bash', '-c']
+             args: ['cp -r /var/www/html/sites/default/files /data/; chown www-data:www-data /data/ -R']
+             volumeMounts:
+             - mountPath: /data
+               name: vol-drupal
+         volumes: 
+          - name: vol-drupal
+            persistentVolumeClaim: 
+              claimName: v3md-drupal-pvc
          containers:
            - name: drupal
              image: "docker.io/v3mainproducts/drupal"
              imagePullPolicy: Always
+             volumeMounts:
+              - mountPath: /var/www/html/sites/default/files
+                name: vol-drupal
+                subPath: files
          imagePullSecrets:
          - name: drupalsecret
   replicas: 1
   selector:
     matchLabels:
       type: front-end
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: v3maindrupal-service
-spec:
-  selector:
-    app: drupal
-  type: LoadBalancer  
-  ports:
-    - protocol: TCP
-      targetPort: 8080
-      port: 80
-      nodePort: 30000
