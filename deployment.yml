@@ -25,7 +25,7 @@ spec:
   resources: 
     requests: 
       storage: 5Gi
-
+      
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -43,7 +43,7 @@ spec:
          app: drupal
          type: front-end
      spec:
-     	 initContainers:
+         initContainers:
            - name: init-sites-volume
              image: "docker.io/v3mainproducts/drupal"
              imagePullPolicy: Always
