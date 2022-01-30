@@ -14,7 +14,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: v3maindrupal-deployment
-  namespace: v3md-drupal
   labels:
      app: drupal
      type: front-end
