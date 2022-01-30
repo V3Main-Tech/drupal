@@ -65,7 +65,7 @@ spec:
                 name: vol-drupal
                 subPath: files
          imagePullSecrets:
-         - name: v3md-drupalserect
+         - name: drupalsecret
   replicas: 1
   selector:
     matchLabels:
