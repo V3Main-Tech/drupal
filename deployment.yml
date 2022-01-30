@@ -43,19 +43,29 @@ spec:
          app: drupal
          type: front-end
      spec:
-     	 containers:
+         initContainers:
+           - name: init-sites-volume
+             image: "docker.io/v3mainproducts/drupal"
+             imagePullPolicy: Always
+             command: ['/bin/bash', '-c']
+             args: ['cp -r /var/www/html/sites/default/files /data/; chown www-data:www-data /data/ -R']
+             volumeMounts:
+             - mountPath: /data
+               name: vol-drupal
+         volumes: 
+          - name: vol-drupal
+            persistentVolumeClaim: 
+              claimName: v3md-drupal-pvc
+         containers:
            - name: drupal
              image: "docker.io/v3mainproducts/drupal"
              imagePullPolicy: Always
              volumeMounts:
-             - name: vol-drupal
-               mountPath: /var/www/html
+              - mountPath: /var/www/html/sites/default/files
+                name: vol-drupal
+                subPath: files
          imagePullSecrets:
          - name: drupalsecret
-         volumes: 
-          - name: vol-drupal
-            persistentVolumeClaim: 
-              claimName: v3md-drupal-pvc    
   replicas: 1
   selector:
     matchLabels:
