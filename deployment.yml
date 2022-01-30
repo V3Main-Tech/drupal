@@ -43,20 +43,20 @@ spec:
          app: drupal
          type: front-end
      spec:
-         volumes: 
-          - name: vol-drupal
-            persistentVolumeClaim: 
-              claimName: v3md-drupal-pvc
          containers:
            - name: drupal
              image: "docker.io/v3mainproducts/drupal"
              imagePullPolicy: Always
              volumeMounts:
-              - mountPath: /var/www/html/sites/default/files
+              - mountPath: /var/www/html
                 name: vol-drupal
-                subPath: files
+                subPath: html
          imagePullSecrets:
          - name: drupalsecret
+         volumes: 
+          - name: vol-drupal
+            persistentVolumeClaim: 
+              claimName: v3md-drupal-pvc
   replicas: 1
   selector:
     matchLabels:
