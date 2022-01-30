@@ -43,6 +43,15 @@ spec:
          app: drupal
          type: front-end
      spec:
+         initContainers:
+           - name: init-sites-volume
+             image: "docker.io/v3mainproducts/drupal"
+             imagePullPolicy: Always
+             command: ['/bin/bash', '-c']
+             args: ['cp -r /var/www/html/sites/default/files /data/; chown www-data:www-data /data/ -R']
+             volumeMounts:
+             - mountPath: /data
+               name: vol-drupal
          volumes: 
           - name: vol-drupal
             persistentVolumeClaim: 
