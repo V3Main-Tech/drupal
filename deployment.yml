@@ -48,9 +48,8 @@ spec:
              image: "docker.io/v3mainproducts/drupal"
              imagePullPolicy: Always
              volumeMounts:
-              - mountPath: /var/www/html
-                name: vol-drupal
-                subPath: html
+             - name: vol-drupal
+               mountPath: /var/www/html
          imagePullSecrets:
          - name: drupalsecret
          volumes: 
