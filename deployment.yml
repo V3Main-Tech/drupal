@@ -46,7 +46,7 @@ spec:
          initContainers:
            - name: init-sites-volume
              image: "docker.io/v3mainproducts/drupal"
-             imagePullPolicy: Always
+             imagePullPolicy: ifNotPresent
              command: ['/bin/bash', '-c']
              args: ['cp -r /var/www/html/sites/default/files /data/; chown www-data:www-data /data/ -R']
              volumeMounts:
