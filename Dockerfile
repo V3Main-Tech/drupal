@@ -97,7 +97,9 @@ RUN wget -O drush.phar https://github.com/drush-ops/drush-launcher/releases/late
 RUN chmod +x drush.phar
 
 RUN mv drush.phar /usr/local/bin/drush
-#RUN cd /var/www/html/sites/default && mkdir files && chmod 775 files
+
+RUN cd /var/www/html/ && chmod 755 -R sites/
+
 #RUN cp -RL /var/www/html/* /var/www/html/ && cp /opt/drupal/.htaccess /var/www/html 
 
 RUN chown -R www-data:www-data /var/www/html/sites/default
