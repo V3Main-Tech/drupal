@@ -102,6 +102,8 @@ RUN cd /var/www/html/ && chmod 755 -R sites/
 
 #RUN cp -RL /var/www/html/* /var/www/html/ && cp /opt/drupal/.htaccess /var/www/html 
 
+RUN cd /var/www/html/sites/default && mkdir files && chmod 775 files
+
 RUN chown -R www-data:www-data /var/www/html/sites/default
 
 RUN sed -i -e 's/Listen 80/Listen 8080/' /etc/apache2/ports.conf && \
